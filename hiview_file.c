@@ -16,6 +16,7 @@
 #include "hiview_config.h"
 #include "hiview_def.h"
 #include "hiview_file.h"
+#include "hiview_log.h"
 #include "hiview_util.h"
 #include "ohos_types.h"
 #include "securec.h"
@@ -82,7 +83,7 @@ boolean InitHiviewFile(HiviewFile *fp, HiviewFileType type, uint32 size)
         pCommon->codeSubVersion = HIVIEW_FILE_HEADER_SUB_VERSION;
         pCommon->defineFileVersion = GetDefineFileVersion(pCommon->type);
     }
-
+    HILOG_INFO(HILOG_MODULE_HIVIEW, "InitHiviewFile for type %d success", (int32)type);
     return TRUE;
 }
 
@@ -207,21 +208,9 @@ uint32 GetFileFreeSize(HiviewFile *fp)
 int32 CloseHiviewFile(HiviewFile *fp)
 {
     if (fp != NULL && fp->fhandle > 0) {
-        if (strcmp(fp->outPath, HIVIEW_FILE_OUT_PATH_LOG) != 0) {
-            HIVIEW_MemFree(MEM_POOL_HIVIEW_ID, fp->outPath);
-            fp->outPath = HIVIEW_FILE_OUT_PATH_LOG;
-        } else if (strcmp(fp->outPath, HIVIEW_FILE_OUT_PATH_UE_EVENT) != 0) {
-            HIVIEW_MemFree(MEM_POOL_HIVIEW_ID, fp->outPath);
-            fp->outPath = HIVIEW_FILE_OUT_PATH_UE_EVENT;
-        } else if (strcmp(fp->outPath, HIVIEW_FILE_OUT_PATH_FAULT_EVENT) != 0) {
-            HIVIEW_MemFree(MEM_POOL_HIVIEW_ID, fp->outPath);
-            fp->outPath = HIVIEW_FILE_OUT_PATH_FAULT_EVENT;
-        } else if (strcmp(fp->outPath, HIVIEW_FILE_OUT_PATH_STAT_EVENT) != 0) {
-            HIVIEW_MemFree(MEM_POOL_HIVIEW_ID, fp->outPath);
-            fp->outPath = HIVIEW_FILE_OUT_PATH_STAT_EVENT;
-        }
         int32 ret = HIVIEW_FileClose(fp->fhandle);
         fp->fhandle = -1;
+        UnRegisterFileWatcher(fp, NULL);
         return ret;
     }
     return -1;
@@ -287,7 +276,7 @@ int IsValidPath(const char *path)
 
 void RegisterFileWatcher(HiviewFile *fp, FileProc func, const char *path)
 {
-    if (fp == NULL || func == NULL || path == NULL) {
+    if (fp == NULL || func == NULL) {
         return;
     }
     fp->pFunc = func;

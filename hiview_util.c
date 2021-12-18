@@ -15,6 +15,7 @@
 
 #include "hiview_util.h"
 
+#include <errno.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
@@ -129,36 +130,58 @@ void HIVIEW_Sleep(uint32 ms)
 
 int32 HIVIEW_FileOpen(const char *path)
 {
-    return open(path, O_RDWR | O_CREAT, 0);
+    int32 handle = open(path, O_RDWR | O_CREAT, 0);
+    if (handle < 0) {
+        printf("HIVIEW_FileOpen %s fail, errno:%d\n", path, errno);
+    }
+    return handle;
 }
 
 int32 HIVIEW_FileClose(int32 handle)
 {
+    if (handle < 0) {
+        return -1;
+    }
     return close(handle);
 }
 
 int32 HIVIEW_FileRead(int32 handle, uint8 *buf, uint32 len)
 {
+    if (handle < 0) {
+        return -1;
+    }
     return read(handle, (char *)buf, len);
 }
 
 int32 HIVIEW_FileWrite(int32 handle, const uint8 *buf, uint32 len)
 {
+    if (handle < 0) {
+        return -1;
+    }
     return write(handle, (const char *)buf, len);
 }
 
 int32 HIVIEW_FileSeek(int32 handle, int32 offset, int32 whence)
 {
+    if (handle < 0) {
+        return -1;
+    }
     return lseek(handle, (off_t)offset, whence);
 }
 
 int32 HIVIEW_FileSize(int32 handle)
 {
+    if (handle < 0) {
+        return -1;
+    }
     return lseek(handle, 0, SEEK_END);
 }
 
 int32 HIVIEW_FileSync(int32 handle)
 {
+    if (handle < 0) {
+        return -1;
+    }
     return fsync(handle);
 }
 
