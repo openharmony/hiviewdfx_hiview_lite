@@ -238,7 +238,7 @@ int8 ProcFile(HiviewFile *fp, const char *dest, FileProcMode mode)
         return -1;
     }
     switch (mode) {
-        case HIVIEW_FILE_COPY:{
+        case HIVIEW_FILE_COPY: {
             HIVIEW_FileClose(fp->fhandle);
             int32 ret = HIVIEW_FileCopy(fp->path, dest);
             fp->fhandle = HIVIEW_FileOpen(fp->path);

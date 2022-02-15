@@ -182,7 +182,7 @@ int8 ProcFile(HiviewFile *fp, const char *dest, FileProcMode mode);
  * @param func callback function.
  * @param dest target file path.
  **/
-void RegisterFileWatcher(HiviewFile *fp, FileProc func, const char *dest);
+void RegisterFileWatcher(HiviewFile *fp, FileProc func, const char *path);
 
 /**
  * Unregister a monitoring function.
