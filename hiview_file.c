@@ -44,6 +44,7 @@ boolean InitHiviewFile(HiviewFile *fp, HiviewFileType type, uint32 size)
 
     fp->fhandle = HIVIEW_FileOpen(fp->path);
     if (fp->fhandle < 0) {
+        HILOG_ERROR(HILOG_MODULE_HIVIEW, "HIVIEW_FileOpen failed type %d, errno %d", (int32)type, (int32)errno);
         return FALSE;
     }
 
@@ -75,6 +76,7 @@ boolean InitHiviewFile(HiviewFile *fp, HiviewFileType type, uint32 size)
         pHeader->rCursor = sizeof(HiviewFileHeader);
         pHeader->wCursor = sizeof(HiviewFileHeader);
         if (WriteFileHeader(fp) == FALSE) {
+            HILOG_ERROR(HILOG_MODULE_HIVIEW, "WriteFileHeader failed type %d, errno %d", (int32)type, (int32)errno);
             return FALSE;
         }
     } else {
