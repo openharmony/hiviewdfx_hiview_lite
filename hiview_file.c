@@ -15,6 +15,7 @@
 
 #include "hiview_config.h"
 #include "hiview_def.h"
+#include "hiview_event.h"
 #include "hiview_file.h"
 #include "hiview_log.h"
 #include "hiview_util.h"
@@ -44,7 +45,13 @@ boolean InitHiviewFile(HiviewFile *fp, HiviewFileType type, uint32 size)
 
     fp->fhandle = HIVIEW_FileOpen(fp->path);
     if (fp->fhandle < 0) {
-        HILOG_ERROR(HILOG_MODULE_HIVIEW, "HIVIEW_FileOpen failed type %d, errno %d", (int32)type, (int32)errno);
+        int32 errnoRecord = (int32)errno;
+        HILOG_ERROR(HILOG_MODULE_HIVIEW, "HIVIEW_FileOpen failed type %d, errno %d", (int32)type, errnoRecord);
+        uint16 hieventID = 1;
+        HiEvent *hievent = HIEVENT_CREATE(HIEVENT_FAULT, hieventID, 2); // 2 params
+        HIEVENT_PUT_INT_VALUE(hievent, 0, (int32)type);
+        HIEVENT_PUT_INT_VALUE(hievent, 1, errnoRecord);
+        HIEVENT_REPORT(hievent);
         return FALSE;
     }
 
@@ -234,7 +241,13 @@ int8 ProcFile(HiviewFile *fp, const char *dest, FileProcMode mode)
             int32 ret = HIVIEW_FileCopy(fp->path, dest);
             fp->fhandle = HIVIEW_FileOpen(fp->path);
             if (ret != 0 || fp->fhandle < 0) {
+                int32 errnoRecord = (int32)errno;
                 HIVIEW_MutexUnlock(fp->mutex);
+                uint16 hieventID = 1;
+                HiEvent *hievent = HIEVENT_CREATE(HIEVENT_FAULT, hieventID, 2); // 2 params
+                HIEVENT_PUT_INT_VALUE(hievent, 0, (int32)fp->header.common.type);
+                HIEVENT_PUT_INT_VALUE(hievent, 1, errnoRecord);
+                HIEVENT_REPORT(hievent);
                 HIVIEW_UartPrint("Procfile failed, type : HIVIEW_FILE_COPY");
                 return -1;
             }

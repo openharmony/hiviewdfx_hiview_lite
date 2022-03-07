@@ -28,6 +28,7 @@ config("hiview_lite_config") {
     "//base/hiviewdfx/hiview_lite",
     "//foundation/distributedschedule/samgr_lite/interfaces/kits/samgr",
     "//base/hiviewdfx/hilog_lite/interfaces/native/kits/hilog_lite",
+    "//base/hiviewdfx/hievent_lite/interfaces/native/innerkits",
   ]
 }
 
