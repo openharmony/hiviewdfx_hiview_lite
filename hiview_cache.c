@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
+#include "hiview_cache.h"
 #include "securec.h"
 #include "ohos_types.h"
-#include "hiview_cache.h"
 #include "hiview_util.h"
 
 static uint16 GetReadCursor(HiviewCache *cache);

@@ -60,11 +60,10 @@ uint64 HIVIEW_GetCurrentTime()
 {
     struct timespec current = {0};
     int ret = clock_gettime(CLOCK_REALTIME, &current);
-    if (ret == 0) {
-        return (uint64)current.tv_sec * HIVIEW_MS_PER_SECOND + current.tv_nsec / HIVIEW_NS_PER_MILLISECOND;
-    } else {
+    if (ret != 0) {
         return 0;
     }
+    return (uint64)current.tv_sec * HIVIEW_MS_PER_SECOND + current.tv_nsec / HIVIEW_NS_PER_MILLISECOND;
 }
 
 int32 HIVIEW_RtcGetCurrentTime(uint64 *val, HIVIEW_RtcTime *time)

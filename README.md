@@ -30,8 +30,8 @@ CORE\_INIT:
 
 [DFX subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/dfx.md)
 
-[hiviwdfx\_hilog\_lite](https://gitee.com/openharmony/hiviewdfx_hilog_lite/blob/master/README.md)
+[hiviewdfx\_hilog\_lite](https://gitee.com/openharmony/hiviewdfx_hilog_lite/blob/master/README.md)
 
-**hiviwdfx\_hiview\_lite**
+**hiviewdfx\_hiview\_lite**
 
-[hiviwdfx\_hievent\_lite](https://gitee.com/openharmony/hiviewdfx_hievent_lite/blob/master/README.md)
+[hiviewdfx\_hievent\_lite](https://gitee.com/openharmony/hiviewdfx_hievent_lite/blob/master/README.md)
