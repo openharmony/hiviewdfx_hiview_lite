@@ -142,7 +142,7 @@ boolean ReadFileHeader(HiviewFile *fp)
     if ((ret == sizeof(HiviewFileHeader)) &&
         ((h.common.prefix & 0xFFFFFF00) == HIVIEW_FILE_HEADER_PREFIX_MASK) &&
         (h.wCursor >= sizeof(HiviewFileHeader))) {
-        memcpy_s(&(fp->header), sizeof(HiviewFileHeader), (void *)&h, sizeof(HiviewFileHeader));
+        (void)memcpy_s(&(fp->header), sizeof(HiviewFileHeader), (void *)&h, sizeof(HiviewFileHeader));
         return TRUE;
     } else {
         return FALSE;
