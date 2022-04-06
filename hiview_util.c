@@ -23,7 +23,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
-#include <unistd.h>
 
 #include "cmsis_os.h"
 
@@ -43,6 +42,15 @@ extern void __enable_irq(void);
 #define HIVIEW_MS_PER_SECOND          1000
 #define HIVIEW_NS_PER_MILLISECOND     1000000
 #define BUFFER_SIZE                   128
+
+static int (*hiview_open)(const char *, int, ...)  = open;
+static int (*hiview_close)(int) = close;
+static ssize_t (*hiview_read)(int, void *, size_t) = read;
+static ssize_t (*hiview_write)(int, const void *, size_t) = write;
+static off_t (*hiview_lseek)(int, off_t, int) = lseek;
+static int (*hiview_fsync)(int) = fsync;
+static int (*hiview_unlink)(const char *) = unlink;
+static int (*hiview_rename)(const char *, const char *) = NULL; // not all platform support rename
 
 void *HIVIEW_MemAlloc(uint8 modId, uint32 size)
 {
@@ -127,9 +135,33 @@ void HIVIEW_Sleep(uint32 ms)
     osDelay(ms / HIVIEW_MS_PER_SECOND);
 }
 
+void HIVIEW_InitHook(HIVIEW_Hooks *hooks)
+{
+    if (hooks == NULL) {
+        // reset
+        hiview_open  = open;
+        hiview_close = close;
+        hiview_read = read;
+        hiview_write = write;
+        hiview_lseek = lseek;
+        hiview_fsync = fsync;
+        hiview_unlink = unlink;
+        hiview_rename = NULL;
+        return;
+    }
+    hiview_open  = (hooks->open_fn) == NULL ? open : hooks->open_fn;
+    hiview_close = (hooks->close_fn) == NULL ? close : hooks->close_fn;;
+    hiview_read = (hooks->read_fn) == NULL ? read : hooks->read_fn;;
+    hiview_write = (hooks->write_fn) == NULL ? write : hooks->write_fn;;
+    hiview_lseek = (hooks->lseek_fn) == NULL ? lseek : hooks->lseek_fn;;
+    hiview_fsync = (hooks->fsync_fn) == NULL ? fsync : hooks->fsync_fn;;
+    hiview_unlink = (hooks->unlink_fn) == NULL ? unlink : hooks->unlink_fn;;
+    hiview_rename = (hooks->rename_fn) == NULL ? rename : hooks->rename_fn;;
+}
+
 int32 HIVIEW_FileOpen(const char *path)
 {
-    int32 handle = open(path, O_RDWR | O_CREAT, 0);
+    int32 handle = hiview_open(path, O_RDWR | O_CREAT, 0);
     if (handle < 0) {
         printf("HIVIEW_FileOpen %s fail, errno:%d\n", path, errno);
     }
@@ -141,7 +173,7 @@ int32 HIVIEW_FileClose(int32 handle)
     if (handle < 0) {
         return -1;
     }
-    return close(handle);
+    return hiview_close(handle);
 }
 
 int32 HIVIEW_FileRead(int32 handle, uint8 *buf, uint32 len)
@@ -149,7 +181,7 @@ int32 HIVIEW_FileRead(int32 handle, uint8 *buf, uint32 len)
     if (handle < 0) {
         return -1;
     }
-    return read(handle, (char *)buf, len);
+    return hiview_read(handle, (char *)buf, len);
 }
 
 int32 HIVIEW_FileWrite(int32 handle, const uint8 *buf, uint32 len)
@@ -157,7 +189,7 @@ int32 HIVIEW_FileWrite(int32 handle, const uint8 *buf, uint32 len)
     if (handle < 0) {
         return -1;
     }
-    return write(handle, (const char *)buf, len);
+    return hiview_write(handle, (const char *)buf, len);
 }
 
 int32 HIVIEW_FileSeek(int32 handle, int32 offset, int32 whence)
@@ -165,7 +197,7 @@ int32 HIVIEW_FileSeek(int32 handle, int32 offset, int32 whence)
     if (handle < 0) {
         return -1;
     }
-    return lseek(handle, (off_t)offset, whence);
+    return hiview_lseek(handle, (off_t)offset, whence);
 }
 
 int32 HIVIEW_FileSize(int32 handle)
@@ -173,7 +205,7 @@ int32 HIVIEW_FileSize(int32 handle)
     if (handle < 0) {
         return -1;
     }
-    return lseek(handle, 0, SEEK_END);
+    return hiview_lseek(handle, 0, SEEK_END);
 }
 
 int32 HIVIEW_FileSync(int32 handle)
@@ -181,12 +213,12 @@ int32 HIVIEW_FileSync(int32 handle)
     if (handle < 0) {
         return -1;
     }
-    return fsync(handle);
+    return hiview_fsync(handle);
 }
 
 int32 HIVIEW_FileUnlink(const char *path)
 {
-    return unlink(path);
+    return hiview_unlink(path);
 }
 
 int32 HIVIEW_FileCopy(const char *src, const char *dest)
@@ -195,12 +227,12 @@ int32 HIVIEW_FileCopy(const char *src, const char *dest)
         HIVIEW_UartPrint("HIVIEW_FileCopy input param is NULL");
         return -1;
     }
-    int32 fdSrc = open(src, O_RDONLY, 0);
+    int32 fdSrc = hiview_open(src, O_RDONLY, 0);
     if (fdSrc < 0) {
         HIVIEW_UartPrint("HIVIEW_FileCopy open src file fail");
         return fdSrc;
     }
-    int32 fdDest = open(dest, O_RDWR | O_CREAT | O_TRUNC, 0);
+    int32 fdDest = hiview_open(dest, O_RDWR | O_CREAT | O_TRUNC, 0);
     if (fdDest < 0) {
         HIVIEW_UartPrint("HIVIEW_FileCopy open dest file fail");
         HIVIEW_FileClose(fdSrc);
@@ -237,6 +269,9 @@ MALLOC_ERROR:
 
 int32 HIVIEW_FileMove(const char *src, const char *dest)
 {
+    if (hiview_rename != NULL) {
+        return hiview_rename(src, dest);
+    }
     int32 ret = HIVIEW_FileCopy(src, dest);
     if (HIVIEW_FileUnlink(src) != 0 || ret != 0) {
         return -1;

@@ -16,6 +16,7 @@
 #ifndef HOS_LITE_HIVIEW_UTIL_H
 #define HOS_LITE_HIVIEW_UTIL_H
 
+#include <unistd.h>
 #include "ohos_types.h"
 
 #ifdef __cplusplus
@@ -59,6 +60,17 @@ typedef struct {
     uint16 millisecond;
 } HIVIEW_RtcTime;
 
+typedef struct {
+    int (*open_fn)(const char *, int, ...);
+    int (*close_fn)(int);
+    ssize_t (*read_fn)(int, void *, size_t);
+    ssize_t (*write_fn)(int, const void *, size_t);
+    off_t (*lseek_fn)(int, off_t, int);
+    int (*fsync_fn)(int);
+    int (*unlink_fn)(const char *);
+    int (*rename_fn)(const char *, const char *);
+} HIVIEW_Hooks;
+
 uint64 HIVIEW_GetCurrentTime(void);
 int32 HIVIEW_RtcGetCurrentTime(uint64 *val, HIVIEW_RtcTime *time);
 
@@ -75,6 +87,7 @@ void HIVIEW_UartPrint(const char *str);
 void HIVIEW_Sleep(uint32 ms);
 
 /* File system */
+void HIVIEW_InitHook(HIVIEW_Hooks *hooks);
 int32 HIVIEW_FileOpen(const char *path);
 int32 HIVIEW_FileClose(int32 handle);
 int32 HIVIEW_FileRead(int32 handle, uint8 *buf, uint32 len);
