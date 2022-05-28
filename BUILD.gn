@@ -20,6 +20,7 @@ declare_args() {
   ohos_hiviewdfx_hievent_lite_event_switch = 1
   ohos_hiviewdfx_hiview_lite_output_module = -1
   ohos_hiviewdfx_hiview_lite_dir = ""
+  ohos_hiviewdfx_hiview_lite_stack_size = 4096
 }
 
 config("hiview_lite_config") {
@@ -47,6 +48,7 @@ static_library("hiview_lite") {
     "DUMP_LITE_SWITCH = $ohos_hiviewdfx_dump_lite_dump_switch",
     "HIEVENT_LITE_SWITCH = $ohos_hiviewdfx_hievent_lite_event_switch",
     "LOG_OUTPUT_MODULE = $ohos_hiviewdfx_hiview_lite_output_module",
+    "HIVIEW_STACK_SIZE = $ohos_hiviewdfx_hiview_lite_stack_size",
   ]
   if (ohos_build_type == "debug") {
     defines += [ "OUTPUT_LEVEL = $ohos_hiviewdfx_hilog_lite_level" ]
