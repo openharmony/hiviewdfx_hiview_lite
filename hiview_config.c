@@ -22,6 +22,8 @@ HiviewConfig g_hiviewConfig = {
     .logSwitch = HILOG_LITE_SWITCH,
     .dumpSwitch = DUMP_LITE_SWITCH,
     .eventSwitch = HIEVENT_LITE_SWITCH,
+    .logOutputModule = 0,
+    .writeFailureCount = 0,
 };
 
 static void HiviewConfigInit(void)
