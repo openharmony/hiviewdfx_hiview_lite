@@ -258,7 +258,7 @@ int8 ProcFile(HiviewFile *fp, const char *dest, FileProcMode mode)
             uint8 type = fp->header.common.type;
             uint32 size = fp->header.size - sizeof(HiviewFileHeader);
             int32 ret = HIVIEW_FileMove(fp->path, dest);
-            if (InitHiviewFile(fp, type, size) == FALSE || ret != 0) {
+            if (InitHiviewFile(fp, (HiviewFileType)type, size) == FALSE || ret != 0) {
                 HIVIEW_MutexUnlock(fp->mutex);
                 HIVIEW_UartPrint("Procfile failed, type : HIVIEW_FILE_RENAME");
                 return -1;
