@@ -21,6 +21,7 @@ declare_args() {
   ohos_hiviewdfx_hiview_lite_output_module = -1
   ohos_hiviewdfx_hiview_lite_dir = ""
   ohos_hiviewdfx_hiview_lite_stack_size = 4096
+  ohos_hiviewdfx_hiview_lite_customize_implementation = false
 }
 
 config("hiview_lite_config") {
@@ -34,7 +35,7 @@ config("hiview_lite_config") {
   ]
 }
 
-static_library("hiview_lite") {
+static_library("hiview_lite_static") {
   sources = [
     "hiview_cache.c",
     "hiview_config.c",
@@ -62,4 +63,12 @@ static_library("hiview_lite") {
     ]
   }
   public_configs = [ ":hiview_lite_config" ]
+}
+
+group("hiview_lite") {
+  if (ohos_hiviewdfx_hiview_lite_customize_implementation) {
+    public_configs = [ ":hiview_lite_config" ]
+  } else {
+    public_deps = [ ":hiview_lite_static" ]
+  }
 }
