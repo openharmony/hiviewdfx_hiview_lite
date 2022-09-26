@@ -59,6 +59,7 @@ boolean InitHiviewFile(HiviewFile *fp, HiviewFileType type, uint32 size)
     FileHeaderCommon *pCommon = &(pHeader->common);
     pCommon->type = (uint8)type;
     pHeader->size = size + sizeof(HiviewFileHeader);
+    fp->configSize = size;
     // Create file for the first time
     if (ReadFileHeader(fp) == FALSE) {
         switch (pCommon->type) {
@@ -256,7 +257,7 @@ int8 ProcFile(HiviewFile *fp, const char *dest, FileProcMode mode)
         case HIVIEW_FILE_RENAME: {
             HIVIEW_FileClose(fp->fhandle);
             uint8 type = fp->header.common.type;
-            uint32 size = fp->header.size - sizeof(HiviewFileHeader);
+            uint32 size = fp->configSize;
             int32 ret = HIVIEW_FileMove(fp->path, dest);
             if (InitHiviewFile(fp, (HiviewFileType)type, size) == FALSE || ret != 0) {
                 HIVIEW_MutexUnlock(fp->mutex);
