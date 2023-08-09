@@ -26,7 +26,6 @@
                 "liteos_m"
             ],
             "third_party": [
-                "cjson",
                 "bounds_checking_function"
             ]
         },
