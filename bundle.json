@@ -13,9 +13,6 @@
     "component": {
         "name": "hiview_lite",
         "subsystem": "hiviewdfx",
-        "syscap": [
-            "SystemCapability.HiviewDFX.HiviewLite"
-        ],
         "adapted_system_type": [
             "mini"
         ],
