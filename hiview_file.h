@@ -190,7 +190,7 @@ void RegisterFileWatcher(HiviewFile *fp, FileProc func, const char *path);
  *
  * @param fp the pointer of file object.
  * @param func callback function.
- * 
+ *
  **/
 void UnRegisterFileWatcher(HiviewFile *fp, FileProc func);
 
