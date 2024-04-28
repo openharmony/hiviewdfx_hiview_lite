@@ -150,13 +150,13 @@ void HIVIEW_InitHook(HIVIEW_Hooks *hooks)
         return;
     }
     hiview_open  = (hooks->open_fn) == NULL ? open : hooks->open_fn;
-    hiview_close = (hooks->close_fn) == NULL ? close : hooks->close_fn;;
-    hiview_read = (hooks->read_fn) == NULL ? read : hooks->read_fn;;
-    hiview_write = (hooks->write_fn) == NULL ? write : hooks->write_fn;;
-    hiview_lseek = (hooks->lseek_fn) == NULL ? lseek : hooks->lseek_fn;;
-    hiview_fsync = (hooks->fsync_fn) == NULL ? fsync : hooks->fsync_fn;;
-    hiview_unlink = (hooks->unlink_fn) == NULL ? unlink : hooks->unlink_fn;;
-    hiview_rename = (hooks->rename_fn) == NULL ? rename : hooks->rename_fn;;
+    hiview_close = (hooks->close_fn) == NULL ? close : hooks->close_fn;
+    hiview_read = (hooks->read_fn) == NULL ? read : hooks->read_fn;
+    hiview_write = (hooks->write_fn) == NULL ? write : hooks->write_fn;
+    hiview_lseek = (hooks->lseek_fn) == NULL ? lseek : hooks->lseek_fn;
+    hiview_fsync = (hooks->fsync_fn) == NULL ? fsync : hooks->fsync_fn;
+    hiview_unlink = (hooks->unlink_fn) == NULL ? unlink : hooks->unlink_fn;
+    hiview_rename = (hooks->rename_fn) == NULL ? rename : hooks->rename_fn;
 }
 
 int32 HIVIEW_FileOpen(const char *path)
@@ -294,10 +294,10 @@ uint8 HIVIEW_WdgResetFlag()
 uint32 Change32Endian(uint32 num)
 {
     unsigned char *buffer = (unsigned char *)&num;
-    uint32 newEndian = (buffer[3] & 0xFF);
-    newEndian |= ((buffer[2] << 8) & 0xFF00);
-    newEndian |= ((buffer[1] << 16) & 0xFF0000);
-    newEndian |= ((buffer[0] << 24) & 0xFF000000);
+    uint32 newEndian = (buffer[3] & 0xFF); // 3: forth char
+    newEndian |= ((buffer[2] << 8) & 0xFF00); // 2: third char, 8: 1 byte length
+    newEndian |= ((buffer[1] << 16) & 0xFF0000); // 16: 2 byte length
+    newEndian |= ((buffer[0] << 24) & 0xFF000000); // 24: 3 byte length
     return newEndian;
 }
 
@@ -305,6 +305,6 @@ uint16 Change16Endian(uint16 num)
 {
     unsigned char* buffer = (unsigned char*)&num;
     uint16 newEndian = (buffer[1] & 0xFF);
-    newEndian |= ((buffer[0] << 8) & 0xFF00);
+    newEndian |= ((buffer[0] << 8) & 0xFF00); // 8: 1 byte length
     return newEndian;
 }
