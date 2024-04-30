@@ -34,10 +34,6 @@
 #include "../../../kernel/liteos_m/arch/include/los_interrupt.h"
 #endif
 
-extern void HAL_NVIC_SystemReset(void);
-extern void __disable_irq(void);
-extern void __enable_irq(void);
-
 #define HIVIEW_WAIT_FOREVER           osWaitForever
 #define HIVIEW_MS_PER_SECOND          1000
 #define HIVIEW_NS_PER_MILLISECOND     1000000
