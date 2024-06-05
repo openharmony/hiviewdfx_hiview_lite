@@ -16,6 +16,9 @@
         "adapted_system_type": [
             "mini"
         ],
+        "features": [
+            "hiview_lite_customized_implementation"
+        ],
         "rom": "10KB",
         "ram": "~10KB",
         "deps": {
