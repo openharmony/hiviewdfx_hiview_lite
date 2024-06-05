@@ -21,7 +21,7 @@ declare_args() {
   ohos_hiviewdfx_hiview_lite_output_module = -1
   ohos_hiviewdfx_hiview_lite_dir = ""
   ohos_hiviewdfx_hiview_lite_stack_size = 4096
-  ohos_hiviewdfx_hiview_lite_customize_implementation = false
+  hiview_lite_customize_implementation = false
 }
 
 config("hiview_lite_config") {
@@ -66,7 +66,7 @@ static_library("hiview_lite_static") {
 }
 
 group("hiview_lite") {
-  if (ohos_hiviewdfx_hiview_lite_customize_implementation) {
+  if (hiview_lite_customize_implementation) {
     public_configs = [ ":hiview_lite_config" ]
   } else {
     public_deps = [ ":hiview_lite_static" ]
