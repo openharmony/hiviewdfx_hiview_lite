@@ -26,10 +26,13 @@ HiviewConfig g_hiviewConfig = {
     .writeFailureCount = 0,
 };
 
-static void HiviewConfigInit(void)
+void HiviewConfigInit(void)
 {
     g_hiviewConfig.hiviewInited = FALSE;
     g_hiviewConfig.logOutputModule = (uint64_t)LOG_OUTPUT_MODULE;
     g_hiviewConfig.writeFailureCount = 0;
 }
+
+#ifndef DISABLE_HIVIEW_LITE_CORE_INIT
 CORE_INIT_PRI(HiviewConfigInit, 0);
+#endif

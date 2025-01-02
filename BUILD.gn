@@ -12,20 +12,22 @@
 # limitations under the License.
 
 declare_args() {
-  ohos_hiviewdfx_hiview_lite_output_option = 1
-  ohos_hiviewdfx_hilog_lite_level = 1
-  ohos_hiviewdfx_hilog_lite_level_release = 3
-  ohos_hiviewdfx_hilog_lite_log_switch = 1
-  ohos_hiviewdfx_dump_lite_dump_switch = 0
-  ohos_hiviewdfx_hievent_lite_event_switch = 1
-  ohos_hiviewdfx_hiview_lite_output_module = -1
-  ohos_hiviewdfx_hiview_lite_dir = ""
-  ohos_hiviewdfx_hiview_lite_stack_size = 4096
+  hiview_lite_output_option = 1
+  hiview_lite_hilog_lite_level = 1
+  hiview_lite_hilog_lite_level_release = 3
+  hiview_lite_hilog_lite_log_switch = 1
+  hiview_lite_dump_lite_dump_switch = 0
+  hiview_lite_hievent_lite_event_switch = 1
+  hiview_lite_output_module = -1
+  hiview_lite_dir = ""
+  hiview_lite_stack_size = 4096
+  hiview_lite_stack_prio = 24
   hiview_lite_customize_implementation = false
+  hiview_lite_disable_core_init = false
 }
 
 config("hiview_lite_config") {
-  defines = [ "HIVIEW_FILE_DIR=\"$ohos_hiviewdfx_hiview_lite_dir\"" ]
+  defines = [ "HIVIEW_FILE_DIR=\"$hiview_lite_dir\"" ]
   include_dirs = [
     "//base/hiviewdfx/hiview_lite",
     "//foundation/systemabilitymgr/samgr_lite/interfaces/kits/samgr",
@@ -44,17 +46,20 @@ static_library("hiview_lite_static") {
     "hiview_util.c",
   ]
   defines = [
-    "OUTPUT_OPTION=$ohos_hiviewdfx_hiview_lite_output_option",
-    "HILOG_LITE_SWITCH=$ohos_hiviewdfx_hilog_lite_log_switch",
-    "DUMP_LITE_SWITCH=$ohos_hiviewdfx_dump_lite_dump_switch",
-    "HIEVENT_LITE_SWITCH=$ohos_hiviewdfx_hievent_lite_event_switch",
-    "LOG_OUTPUT_MODULE=$ohos_hiviewdfx_hiview_lite_output_module",
-    "HIVIEW_STACK_SIZE=$ohos_hiviewdfx_hiview_lite_stack_size",
+    "OUTPUT_OPTION=$hiview_lite_output_option",
+    "HILOG_LITE_SWITCH=$hiview_lite_hilog_lite_log_switch",
+    "DUMP_LITE_SWITCH=$hiview_lite_dump_lite_dump_switch",
+    "HIEVENT_LITE_SWITCH=$hiview_lite_hievent_lite_event_switch",
+    "LOG_OUTPUT_MODULE=$hiview_lite_output_module",
+    "HIVIEW_STACK_SIZE=$hiview_lite_stack_size",
   ]
   if (ohos_build_type == "debug") {
-    defines += [ "OUTPUT_LEVEL=$ohos_hiviewdfx_hilog_lite_level" ]
+    defines += [ "OUTPUT_LEVEL=$hiview_lite_hilog_lite_level" ]
   } else {
-    defines += [ "OUTPUT_LEVEL=$ohos_hiviewdfx_hilog_lite_level_release" ]
+    defines += [ "OUTPUT_LEVEL=$hiview_lite_hilog_lite_level_release" ]
+  }
+  if (hiview_lite_disable_core_init) {
+    defines += [ "DISABLE_HIVIEW_LITE_CORE_INIT" ]
   }
   if (board_toolchain_type == "iccarm") {
     cflags = [

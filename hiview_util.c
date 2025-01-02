@@ -34,11 +34,17 @@
 #include "../../../kernel/liteos_m/arch/include/los_interrupt.h"
 #endif
 
+extern void HAL_NVIC_SystemReset(void);
+extern void __disable_irq(void);
+extern void __enable_irq(void);
+
 #define HIVIEW_WAIT_FOREVER           osWaitForever
 #define HIVIEW_MS_PER_SECOND          1000
 #define HIVIEW_NS_PER_MILLISECOND     1000000
 #define BUFFER_SIZE                   128
 
+static uint64 HIVIEW_GetCurrentTimeDef(void);
+static void HIVIEW_UartPrintDef(const char *str);
 static int (*hiview_open)(const char *, int, ...)  = open;
 static int (*hiview_close)(int) = close;
 static ssize_t (*hiview_read)(int, void *, size_t) = read;
@@ -47,6 +53,8 @@ static off_t (*hiview_lseek)(int, off_t, int) = lseek;
 static int (*hiview_fsync)(int) = fsync;
 static int (*hiview_unlink)(const char *) = unlink;
 static int (*hiview_rename)(const char *, const char *) = NULL; // not all platform support rename
+static uint64 (*hiview_get_time)(void) = HIVIEW_GetCurrentTimeDef;
+static void (*hiview_uart_print)(const char *) = HIVIEW_UartPrintDef;
 
 void *HIVIEW_MemAlloc(uint8 modId, uint32 size)
 {
@@ -60,7 +68,7 @@ void HIVIEW_MemFree(uint8 modId, void *pMem)
     free(pMem);
 }
 
-uint64 HIVIEW_GetCurrentTime()
+static uint64 HIVIEW_GetCurrentTimeDef(void)
 {
     struct timespec current = {0};
     int ret = clock_gettime(CLOCK_REALTIME, &current);
@@ -68,6 +76,11 @@ uint64 HIVIEW_GetCurrentTime()
         return 0;
     }
     return (uint64)current.tv_sec * HIVIEW_MS_PER_SECOND + current.tv_nsec / HIVIEW_NS_PER_MILLISECOND;
+}
+
+uint64 HIVIEW_GetCurrentTime(void)
+{
+    return hiview_get_time();
 }
 
 int32 HIVIEW_RtcGetCurrentTime(uint64 *val, HIVIEW_RtcTime *time)
@@ -121,9 +134,14 @@ uint32 HIVIEW_GetTaskId()
     return (uint32)osThreadGetId();
 }
 
-void HIVIEW_UartPrint(const char *str)
+static void HIVIEW_UartPrintDef(const char *str)
 {
     printf("%s\n", str);
+}
+
+void HIVIEW_UartPrint(const char *str)
+{
+    hiview_uart_print(str);
 }
 
 void HIVIEW_Sleep(uint32 ms)
@@ -143,6 +161,8 @@ void HIVIEW_InitHook(HIVIEW_Hooks *hooks)
         hiview_fsync = fsync;
         hiview_unlink = unlink;
         hiview_rename = NULL;
+        hiview_get_time = HIVIEW_GetCurrentTimeDef;
+        hiview_uart_print = HIVIEW_UartPrintDef;
         return;
     }
     hiview_open  = (hooks->open_fn) == NULL ? open : hooks->open_fn;
@@ -152,7 +172,9 @@ void HIVIEW_InitHook(HIVIEW_Hooks *hooks)
     hiview_lseek = (hooks->lseek_fn) == NULL ? lseek : hooks->lseek_fn;
     hiview_fsync = (hooks->fsync_fn) == NULL ? fsync : hooks->fsync_fn;
     hiview_unlink = (hooks->unlink_fn) == NULL ? unlink : hooks->unlink_fn;
-    hiview_rename = (hooks->rename_fn) == NULL ? rename : hooks->rename_fn;
+    hiview_rename = hooks->rename_fn;
+    hiview_get_time = (hooks->hiview_get_time_fn) == NULL ? HIVIEW_GetCurrentTimeDef : hooks->hiview_get_time_fn;
+    hiview_uart_print = (hooks->hiview_uart_print_fn) == NULL ? HIVIEW_UartPrintDef : hooks->hiview_uart_print_fn;
 }
 
 int32 HIVIEW_FileOpen(const char *path)
