@@ -96,6 +96,8 @@ typedef enum {
 
 extern HiviewConfig g_hiviewConfig;
 
+void HiviewConfigInit(void);
+
 #ifdef __cplusplus
 #if __cplusplus
 }

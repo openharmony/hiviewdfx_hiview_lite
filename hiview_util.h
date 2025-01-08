@@ -69,6 +69,8 @@ typedef struct {
     int (*fsync_fn)(int);
     int (*unlink_fn)(const char *);
     int (*rename_fn)(const char *, const char *);
+    uint64 (*hiview_get_time_fn)(void);
+    void (*hiview_uart_print_fn)(const char *);
 } HIVIEW_Hooks;
 
 uint64 HIVIEW_GetCurrentTime(void);
