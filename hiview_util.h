@@ -103,8 +103,6 @@ int32 HIVIEW_FileMove(const char *src, const char *dest);
 
 uint8 *HIVIEW_GetStackBegin(void);
 uint32 HIVIEW_GetStackSize(void);
-void HIVIEW_WatchDogSystemReset(void);
-uint8 HIVIEW_WdgResetFlag(void);
 
 uint16 Change16Endian(uint16 num);
 uint32 Change32Endian(uint32 num);
