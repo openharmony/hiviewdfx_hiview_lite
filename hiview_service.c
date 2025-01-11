@@ -88,7 +88,7 @@ static BOOL MessageHandle(Service *service, Request *request)
 static TaskConfig GetTaskConfig(Service *service)
 {
     (void)service;
-    TaskConfig config = { LEVEL_LOW, PRI_NORMAL, HIVIEW_STACK_SIZE, 10, SINGLE_TASK };
+    TaskConfig config = { LEVEL_LOW, HIVIEW_STACK_PRIO, HIVIEW_STACK_SIZE, 10, SINGLE_TASK };
     return config;
 }
 
