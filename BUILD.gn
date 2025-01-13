@@ -52,6 +52,7 @@ static_library("hiview_lite_static") {
     "HIEVENT_LITE_SWITCH=$hiview_lite_hievent_lite_event_switch",
     "LOG_OUTPUT_MODULE=$hiview_lite_output_module",
     "HIVIEW_STACK_SIZE=$hiview_lite_stack_size",
+    "HIVIEW_STACK_PRIO=$hiview_lite_stack_prio",
   ]
   if (ohos_build_type == "debug") {
     defines += [ "OUTPUT_LEVEL=$hiview_lite_hilog_lite_level" ]
