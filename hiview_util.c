@@ -71,7 +71,7 @@ static uint64 HIVIEW_GetCurrentTimeDef(void)
     if (ret != 0) {
         return 0;
     }
-    return (uint64)current.tv_sec * HIVIEW_MS_PER_SECOND + current.tv_nsec / HIVIEW_NS_PER_MILLISECOND;
+    return (uint64)current.tv_sec * HIVIEW_MS_PER_SECOND + (uint64)current.tv_nsec / HIVIEW_NS_PER_MILLISECOND;
 }
 
 uint64 HIVIEW_GetCurrentTime(void)
