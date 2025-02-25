@@ -136,7 +136,7 @@ boolean ReadFileHeader(HiviewFile *fp)
     h.common.defineFileVersion = Change32Endian(h.common.defineFileVersion);
     h.createTime = Change32Endian(h.createTime);
 #endif
-    h.wCursor = HIVIEW_FileSize(fp->fhandle);
+    h.wCursor = (uint32)HIVIEW_FileSize(fp->fhandle);
     h.rCursor = sizeof(HiviewFileHeader);
     if ((ret == sizeof(HiviewFileHeader)) &&
         ((h.common.prefix & 0xFFFFFF00) == HIVIEW_FILE_HEADER_PREFIX_MASK) &&
@@ -167,7 +167,7 @@ int32 WriteToFile(HiviewFile *fp, const uint8 *data, uint32 len)
     }
     if ((int32)len == HIVIEW_FileWrite(fp->fhandle, data, len)) {
         h->wCursor += len;
-        wLen += len;
+        wLen += (int32)len;
     }
     return wLen;
 }
@@ -184,12 +184,12 @@ int32 ReadFromFile(HiviewFile *fp, uint8 *data, uint32 readLen)
     if (wCursor < readLen) {
         return 0;
     }
-    int32 rLen = (readLen <= (wCursor - rCursor)) ? readLen : (wCursor - rCursor);
+    int32 rLen = (int32)((readLen <= (wCursor - rCursor)) ? readLen : (wCursor - rCursor));
     if (HIVIEW_FileSeek(fp->fhandle, rCursor, HIVIEW_SEEK_SET) < 0) {
         return 0;
     }
     if ((int32)rLen == HIVIEW_FileRead(fp->fhandle, data, rLen)) {
-        h->rCursor += rLen;
+        h->rCursor += (uint32)rLen;
     } else {
         rLen = 0;
     }
