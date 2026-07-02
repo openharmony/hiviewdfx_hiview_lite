@@ -24,6 +24,7 @@ declare_args() {
   hiview_lite_stack_prio = 24
   hiview_lite_customize_implementation = false
   hiview_lite_disable_core_init = false
+  hiview_lite_mini = false
 }
 
 config("hiview_lite_config") {
@@ -39,12 +40,16 @@ config("hiview_lite_config") {
 
 static_library("hiview_lite_static") {
   sources = [
-    "hiview_cache.c",
     "hiview_config.c",
-    "hiview_file.c",
-    "hiview_service.c",
-    "hiview_util.c",
+    "hiview_util.c"
   ]
+  if (!hiview_lite_mini) {
+    sources += [
+    "hiview_cache.c",
+    "hiview_file.c",
+    "hiview_service.c"
+    ]
+  }
   defines = [
     "OUTPUT_OPTION=$hiview_lite_output_option",
     "HILOG_LITE_SWITCH=$hiview_lite_hilog_lite_log_switch",
