@@ -28,7 +28,8 @@
             "hiview_lite_stack_size",
             "hiview_lite_stack_prio",
             "hiview_lite_customize_implementation",
-            "hiview_lite_disable_core_init"
+            "hiview_lite_disable_core_init",
+            "hiview_lite_mini"
         ],
         "rom": "10KB",
         "ram": "~10KB",
