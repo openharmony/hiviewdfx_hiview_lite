@@ -35,6 +35,7 @@ config("hiview_lite_config") {
     "//base/hiviewdfx/hilog_lite/interfaces/native/kits/hilog_lite",
     "//base/hiviewdfx/hievent_lite/interfaces/native/innerkits",
     "//commonlibrary/utils_lite/include",
+    "//commonlibrary/utils_lite/kal/interrupt/include",
   ]
 }
 
@@ -50,6 +51,7 @@ static_library("hiview_lite_static") {
     "hiview_service.c"
     ]
   }
+  deps = [ "//commonlibrary/utils_lite/kal/interrupt:kal_interrupt" ]
   defines = [
     "OUTPUT_OPTION=$hiview_lite_output_option",
     "HILOG_LITE_SWITCH=$hiview_lite_hilog_lite_log_switch",
