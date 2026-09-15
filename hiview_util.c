@@ -26,7 +26,7 @@
 
 #include "cmsis_os.h"
 
-#include "kal_interrupt.h"
+#include "hiview_kal.h"
 
 #define HIVIEW_WAIT_FOREVER           osWaitForever
 #define HIVIEW_MS_PER_SECOND          1000
@@ -111,12 +111,12 @@ int32 HIVIEW_MutexUnlock(HiviewMutexId_t mutex)
 
 uint32 HIVIEW_IntLock()
 {
-    return (uint32)KalIntLock();
+    return (uint32)HiviewIrqLock();
 }
 
 void HIVIEW_IntRestore(uint32 intSave)
 {
-    KalIntRestore((unsigned int)intSave);
+    HiviewIrqUnlock(intSave);
 }
 
 uint32 HIVIEW_GetTaskId()

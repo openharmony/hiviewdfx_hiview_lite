@@ -1,0 +1,18 @@
+config("hiview_kal_public_config") {
+  # 向依赖者（hiview_lite_static）传递 KAL 头与内核中断头路径
+  include_dirs = [
+    ".",
+    # WS63(Huawei_LiteOS) 自带内核头优先；其他产品该路径不存在，GCC 忽略
+    "//device/soc/hisilicon/ws63v100/sdk/kernel/liteos/liteos_v208.5.0/Huawei_LiteOS/kernel/include",
+    "//kernel/liteos_m/kernel/include",
+    "//kernel/liteos_m/arch/include",
+  ]
+}
+
+# KAL 实现（hiview_kal_irq.c）由 hiview_lite_static 直接编入其 .a（见 ../../BUILD.gn）。
+# 原因：WS63 采用两段式构建，最终镜像由 SDK 中写死的组件列表
+# （libs_url/ws63/cmake/ohos.cmake）以 --whole-archive 方式链接；
+# 不在列表内的独立 .a 会被丢弃，表现为 undefined reference to HiviewIrqLock / HiviewIrqUnlock。
+group("hiview_kal_liteos_m") {
+  public_configs = [ ":hiview_kal_public_config" ]
+}
