@@ -26,13 +26,7 @@
 
 #include "cmsis_os.h"
 
-#if defined(CHIP_VER_Hi3861) || \
-    defined(CHIP_VER_Hi3861L) || \
-    defined(CHIP_VER_Hi3881)
-#include "los_hwi.h"
-#else
-#include "../../../kernel/liteos_m/arch/include/los_interrupt.h"
-#endif
+#include "hiview_kal.h"
 
 #define HIVIEW_WAIT_FOREVER           osWaitForever
 #define HIVIEW_MS_PER_SECOND          1000
@@ -117,12 +111,12 @@ int32 HIVIEW_MutexUnlock(HiviewMutexId_t mutex)
 
 uint32 HIVIEW_IntLock()
 {
-    return LOS_IntLock();
+    return (uint32)HiviewIrqLock();
 }
 
 void HIVIEW_IntRestore(uint32 intSave)
 {
-    LOS_IntRestore(intSave);
+    HiviewIrqUnlock(intSave);
 }
 
 uint32 HIVIEW_GetTaskId()
